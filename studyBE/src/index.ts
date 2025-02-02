@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import auth from "./authMiddleware";
+import { CustomRequest } from "./interfaces/request";
 
 dotenv.config();
 
@@ -44,7 +46,7 @@ app.post("/signup",async(req,res)=>{
     return
 
   } catch (e) {
-    console.error("signup ERROR:", e);
+    console.error("sis jwt payloadignup ERROR:", e);
     res.status(500).json({
       message : "error while signup"
     })
@@ -99,6 +101,39 @@ app.post("/signin",async(req,res)=>{
     })
 }
 
+})
+
+
+app.get("/profile",auth,async(req:CustomRequest,res)=>{
+
+  try {
+    const user = await client.user.findFirst({
+      where:{
+        id: req.id
+      },
+      select:{
+        name: true,
+        email: true,
+      }
+    })
+
+    if(!user){
+      res.status(404).json({
+        message: "user not found"
+      })
+      return;
+    }
+
+    res.status(200).json(user)
+
+
+  } catch (e) {
+    console.error("profile error: ",e);
+    res.status(500).json({
+      message: "error connecting to DB"
+    })
+    return;
+  }
 })
 
 

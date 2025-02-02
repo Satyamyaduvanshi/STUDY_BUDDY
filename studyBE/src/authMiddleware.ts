@@ -13,7 +13,10 @@ function auth(req: CustomRequest, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized: No token provided" });
+      res.status(401).json({ 
+        message: "Unauthorized: No token provided" 
+      });
+      return;
     }
 
     const token = authHeader.split(" ")[1];
@@ -21,7 +24,10 @@ function auth(req: CustomRequest, res: Response, next: NextFunction) {
     const decode = jwt.verify(token, jwt_secret) as JwtPayload;
 
     if (!decode || typeof decode !== "object" || !decode.id) {
-      return res.status(401).json({ message: "Unauthorized: Invalid token" });
+      res.status(401).json({ 
+        message: "Unauthorized: Invalid token" 
+      });
+      return;
     }
 
     req.id = decode.id; 
@@ -29,6 +35,7 @@ function auth(req: CustomRequest, res: Response, next: NextFunction) {
   } catch (error) {
     console.error("Auth Middleware Error:", error);
     res.status(403).json({ message: "Forbidden: Invalid or expired token" });
+    return;
   }
 }
 
