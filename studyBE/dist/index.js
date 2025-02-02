@@ -18,6 +18,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const authMiddleware_1 = __importDefault(require("./authMiddleware"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const client = new client_1.PrismaClient();
@@ -49,7 +50,7 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return;
     }
     catch (e) {
-        console.error("signup ERROR:", e);
+        console.error("sis jwt payloadignup ERROR:", e);
         res.status(500).json({
             message: "error while signup"
         });
@@ -94,6 +95,35 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).json({
             message: "something goes wrong in signin"
         });
+    }
+}));
+app.get("/profile", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield client.user.findFirst({
+            where: {
+                id: req.id
+            },
+            select: {
+                name: true,
+                email: true,
+            }
+        });
+        if (!user) {
+            console.log("hello reached 1");
+            res.status(404).json({
+                message: "user not found"
+            });
+            return;
+        }
+        console.log("reached 2");
+        res.status(200).json(user);
+    }
+    catch (e) {
+        console.error("profile error: ", e);
+        res.status(500).json({
+            message: "error connecting to DB"
+        });
+        return;
     }
 }));
 app.listen(3000);

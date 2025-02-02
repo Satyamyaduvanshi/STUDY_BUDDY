@@ -24,7 +24,7 @@ function auth(req: CustomRequest, res: Response, next: NextFunction) {
     const decode = jwt.verify(token, jwt_secret) as JwtPayload;
 
     if (!decode || typeof decode !== "object" || !decode.id) {
-      res.status(401).json({ 
+      res.status(403).json({ 
         message: "Unauthorized: Invalid token" 
       });
       return;

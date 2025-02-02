@@ -116,14 +116,16 @@ app.get("/profile",auth,async(req:CustomRequest,res)=>{
         email: true,
       }
     })
-
     if(!user){
+      console.log("hello reached 1");
+      
       res.status(404).json({
         message: "user not found"
       })
       return;
     }
-
+    console.log("reached 2");
+    
     res.status(200).json(user)
 
 
