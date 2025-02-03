@@ -11,3 +11,6 @@ export const signinType = z.object({
   password: z.string()
 })
 
+export const updateType = z.object({
+  name: z.string()
+})

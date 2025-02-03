@@ -14,16 +14,44 @@ datasource db {
 }
 
 model User {
- id         Int        @default(autoincrement()) @id
- name       String
- email      String     @unique
- password   String
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  profilePic    String?        // Optional profile picture URL
+
+  // One user can create multiple rooms
+  roomsCreated  Rooms[]        @relation("RoomCreator")
+
+  // A user can be in only one room at a time
+  studySession  StudySession? 
 }
 
 model Rooms {
- id             Int        @default(autoincrement()) @id
- admin          Int 
- description    String
- member         Int
- date           DateTime   @default(now())
+  id           Int       @id @default(autoincrement())
+  adminId      Int       // Foreign key to User who created the room
+  description  String
+  createdAt    DateTime  @default(now())
+  duration     Int       // Duration in minutes (set by admin)
+
+  // When a room expires, it will be deleted
+  expiresAt    DateTime  // Store end time = createdAt + duration
+
+  // Room admin
+  adminUser    User      @relation("RoomCreator", fields: [adminId], references: [id])
+
+  // Users who joined the room (One-to-Many instead of Many-to-Many)
+  studySessions StudySession[]
+}
+
+// A user can only be in one room at a time (One-to-Many)
+model StudySession {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique  // Ensures a user can join only one room at a time
+  roomId     Int
+  joinedAt   DateTime @default(now())
+  studyTime  Int      @default(0) // Time studied (tracked in WebSocket events)
+
+  user       User     @relation(fields: [userId], references: [id])
+  room       Rooms    @relation(fields: [roomId], references: [id])
 }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { signinType, signupType } from "../types";
+import { signinType, signupType, updateType } from "../types";
 import bcrypt from "bcrypt";
 import jwt  from "jsonwebtoken";
 import { CustomRequest } from "../interfaces/request";
@@ -182,5 +182,30 @@ export const profile = async(req:CustomRequest,res:Response)=>{
             message: "error connectin to db"
         })
         return; 
+    }
+}
+
+export const updateUser = async(req:CustomRequest,res:Response)=>{
+    const parsedData = updateType.safeParse(req.body);
+    const {name} = req.body;
+    try {
+        const response = await client.user.update({
+            where:{
+                id: req.id
+            },data:{
+                name: name
+            }
+        })
+
+        res.status(200).json({
+            message: `name successfully changes to ${name}`
+        })
+
+    } catch (e) {
+        console.error("update user error: ",e);
+        res.status(500).json({
+            message: "error in DB"
+        })
+        return;
     }
 }

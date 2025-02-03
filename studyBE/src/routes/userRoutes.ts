@@ -1,12 +1,21 @@
 import { Router } from "express";
-import { signup,signin,profile,deleteUser } from "../controller/UserController";
+import { 
+    signup,
+    signin,
+    profile,
+    deleteUser,
+    updateUser,
+
+    } from "../controller/UserController";
+
 import auth from "../middleware/authMiddleware";
 
-const userRouter = Router();
+const userRoutes = Router();
 
-userRouter.post("/signup",signup);
-userRouter.post("/signin",signin);
-userRouter.get("/profile",auth,profile);
-userRouter.delete("/deleteUser",auth,deleteUser);
+userRoutes.post("/signup",signup);
+userRoutes.post("/signin",signin);
+userRoutes.get("/profile",auth,profile);
+userRoutes.delete("/deleteuser",auth,deleteUser);
+userRoutes.put("/updateuser",auth,updateUser);
 
-export default userRouter;
+export default userRoutes;
