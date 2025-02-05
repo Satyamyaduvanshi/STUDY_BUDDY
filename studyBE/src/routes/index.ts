@@ -8,6 +8,6 @@ const router = Router();
 //* user routes
 router.use("/api/user",userRoutes)
 //* rooms routes
-router.use("/api/rooms",roomRoutes)
+router.use("/api/room/home",roomRoutes)
 
 export default router;

@@ -30,12 +30,13 @@ model User {
 model Rooms {
   id           Int       @id @default(autoincrement())
   adminId      Int       // Foreign key to User who created the room
+  roomName     String
   description  String
   createdAt    DateTime  @default(now())
   duration     Int       // Duration in minutes (set by admin)
 
   // When a room expires, it will be deleted
-  expiresAt    DateTime  // Store end time = createdAt + duration
+  expiresAt    DateTime  // Store end time = createdAt + duration:
 
   // Room admin
   adminUser    User      @relation("RoomCreator", fields: [adminId], references: [id])

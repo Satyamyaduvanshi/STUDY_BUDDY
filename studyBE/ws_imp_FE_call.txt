@@ -1,0 +1,51 @@
+// Connect to WebSocket server
+const socket = new WebSocket("ws://localhost:8080");
+
+// Send token once connection is established
+socket.onopen = () => {
+    const token = "YOUR_JWT_TOKEN"; // Retrieve the token from wherever it's stored (localStorage, etc.)
+    socket.send(JSON.stringify({ event: "authenticate", token: token }));
+};
+
+// Handle incoming messages
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log("Received:", data);
+
+    if (data.message === "Authenticated") {
+        console.log(`User ${data.userId} authenticated successfully`);
+    } else if (data.error) {
+        console.error("Error:", data.error);
+    }
+};
+
+// Example of creating a room
+function createRoom(duration, description,roomName) {
+    socket.send(JSON.stringify({
+        event: "createRoom",
+        duration: duration,
+        description: description
+    }));
+}
+
+// Example of joining a room
+function joinRoom(roomId) {
+    socket.send(JSON.stringify({
+        event: "joinRoom",
+        roomId: roomId
+    }));
+}
+
+// Example of leaving a room
+function leaveRoom() {
+    socket.send(JSON.stringify({
+        event: "leaveRoom"
+    }));
+}
+
+// Example of listing rooms
+function listRooms() {
+    socket.send(JSON.stringify({
+        event: "listRooms"
+    }));
+}
