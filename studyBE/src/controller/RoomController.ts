@@ -14,7 +14,7 @@ const rooms = new Map<number,{users: Map<number,WebSocket>;expiration: NodeJS.Ti
 const jwt_secret = process.env.JWT_SECRET || " "
 const MAX_ROOM_CAPACITY = 10;
 
-
+//* authentication in websocket
 export async function authenticate(socket: WebSocket, token: string) {
     try {
         const decode = jwt.verify(token,jwt_secret) as { id:number }
@@ -30,7 +30,7 @@ export async function authenticate(socket: WebSocket, token: string) {
         return null 
     }   
 }
-
+//*  create room 
 export async function createRoom(socket: WebSocket, adminId: number, roomName: string, description: string, duration: number) {
 
     try {
@@ -73,6 +73,8 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
    
 }
 
+//* delete room
+
 export async function deletRooom(roomId:number) {
     try {
         await client.rooms.delete({
@@ -98,6 +100,8 @@ export async function deletRooom(roomId:number) {
     }
     
 }
+
+//* join room
 
 export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
    
@@ -157,6 +161,7 @@ export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
     }
 }
 
+//* leave room
 
 export async function leaveRoom(socket:WebSocket, userId: number) {
 
@@ -196,6 +201,8 @@ export async function leaveRoom(socket:WebSocket, userId: number) {
 
     
 }
+
+//* list room 
 
 export async function listRooms(socket:WebSocket) {
 
