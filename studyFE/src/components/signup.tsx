@@ -18,28 +18,84 @@ export default function SignuPage() {
         setError("");
 
         try {
-            await axios.post("/api/user/signup",{
+            const responseSignup = await axios.post("/api/user/signup",{
                 name,
                 email,
                 password
             })
-            try {
-                const {data} = await axios.post("/api/user/login",{
-                    email,
-                    password
-                })
+
+            const message: string = responseSignup.data.message
+
+            if(message){
+
+                try {
+                    const responseSignin = await axios.post("/api/user/signin",{
+                        email,
+                        password
+                    })
+                    const token = responseSignin.data.authorization
 
 
-                localStorage.setItem("authorization",data.token)
-                navigate("/home")
-                  
-            } catch (err: any) {
-                setError(err.response?.data?.message || "login failed during signup ")
-                
+                    if(token){
+                        
+                    localStorage.setItem("authorization",token);
+                    navigate("/home")      
+                      
+                    }
+                    else{
+                        setError("signin error in signup")
+                    }
+                    
+                      
+                } catch (err: any) {
+                    if (err.response) {
+                        switch (err.response.status) {
+                            case 400:
+                                setError("Validation failed. Please check your input.");
+                                break;
+                            case 403:
+                                setError("User not found. Please check your email.");
+                                break;
+                            case 401:
+                                setError("Incorrect password. Try again.");
+                                break;
+                            case 500:
+                                setError("Internal server error. Please try again later.");
+                                break;
+                            default:
+                                setError("An unexpected error occurred.");
+                        }
+                    } else {
+                        setError("Network error. Please check your connection.");
+                    }
+                    
+                }
+
+            }else{
+                setError("user not created")
             }
+            
+            
 
         } catch (err:any) {
-            setError(err.response?.data?.message || "signup failed")
+            
+            if(err.response){
+                switch (err.response.status){
+                    case 400: 
+                        setError(" validation failed, please try again")
+                        break;
+                    case 403:
+                        setError("user already exist, use another email")
+                        break;
+                    case 500:
+                        setError("Internal server error. please try again!")
+                        break;
+                    default:
+                        setError("an unexpected error occurred")
+                }
+            }else{
+                setError("Network error. Please check your connection.")
+            }
             
         }
     }
