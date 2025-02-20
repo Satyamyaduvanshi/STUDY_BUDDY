@@ -1,18 +1,15 @@
-import { Button } from "./ui/button"
+
 import { Bar } from "./upperBar"
+import Hero from "./hero"
 
 export default function HomePage() {
 
 
     return (
 
-        <div className=" relative min-h-screen w-screen overflow-x-hidden">
+        <div className=" relative">
         <Bar/>
-
-        <div className="">
-
-        </div>
-
+        <Hero/>
 
         </div>
         
