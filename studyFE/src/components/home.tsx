@@ -1,6 +1,7 @@
 
 import { Bar } from "./upperBar"
 import Hero from "./hero"
+import Footer from "./footer"
 
 export default function HomePage() {
 
@@ -10,6 +11,7 @@ export default function HomePage() {
         <div className=" relative">
         <Bar/>
         <Hero/>
+        <Footer/>
 
         </div>
         
