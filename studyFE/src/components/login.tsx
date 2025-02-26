@@ -22,7 +22,7 @@ export default function LoginPage() {
             
             if (token) {
                 localStorage.setItem("authorization", token);
-                navigate("/dashboard");
+                navigate("/");
             } else {
                 setError("Login failed. Please try again.");
             }

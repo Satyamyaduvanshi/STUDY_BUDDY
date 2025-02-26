@@ -39,7 +39,7 @@ export default function SignuPage() {
                     if(token){
                         
                     localStorage.setItem("authorization",token);
-                    navigate("/home")      
+                    navigate("/")      
                       
                     }
                     else{
