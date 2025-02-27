@@ -24,7 +24,7 @@ const Dashboard = () => {
                 return;
             }
 
-            ws.send(JSON.stringify({ event: "authenticate", token }));
+            ws.send(JSON.stringify({ event: "Authenticated", token }));
         };
 
         ws.onmessage = (event) => {
