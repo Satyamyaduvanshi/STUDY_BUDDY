@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -b && node ./dist/index.js"
-  },
+  "dev": "nodemon --ext ts --exec 'tsc -b && node dist/index.js'"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "prisma": "^6.3.0"
   }
 }

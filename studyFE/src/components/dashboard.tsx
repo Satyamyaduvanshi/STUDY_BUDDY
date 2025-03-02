@@ -24,7 +24,7 @@ const Dashboard = () => {
                 return;
             }
 
-            ws.send(JSON.stringify({ event: "Authenticated", token }));
+            ws.send(JSON.stringify({ event: "authentication", token }));
         };
 
         ws.onmessage = (event) => {
@@ -34,7 +34,7 @@ const Dashboard = () => {
             if (data.message === "Authenticated") {
                 console.log(`✅ User ${data.userId} authenticated successfully`);
             } else if (data.error) {
-                console.error("❌ Authentication Failed:", data.error);
+                console.error("❌  error:", data.error);
             } else if (data.event === "roomList") {
                 setRooms(data.rooms);
             }

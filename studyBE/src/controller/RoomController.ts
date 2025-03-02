@@ -1,9 +1,8 @@
 import { WebSocket } from "ws";
 import dotevn from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from "typescript";
-import { tuple } from "zod";
+import jwt from "jsonwebtoken";
+
 
 
 dotevn.config();
@@ -17,7 +16,16 @@ const MAX_ROOM_CAPACITY = 10;
 //* authentication in websocket
 export async function authenticate(socket: WebSocket, token: string) {
     try {
-        const decode = jwt.verify(token,jwt_secret) as { id:number }
+        console.log("inside authenticate funcation");
+        
+        const realToken = token.split(" ")[1]
+
+        console.log(realToken);
+        
+        
+        
+        
+        const decode = jwt.verify(realToken,jwt_secret) as { id:number }
         if(!decode || !decode.id){
             throw new Error("invalid token");
         }
@@ -32,11 +40,20 @@ export async function authenticate(socket: WebSocket, token: string) {
 }
 //*  create room 
 export async function createRoom(socket: WebSocket, adminId: number, roomName: string, description: string, duration: number) {
-
+    console.log("outside try/catch createRoom funcation");
+    
     try {
+        console.log("inside try createRoom funcation");
+        
         const createdAt = new Date
         const expiresAt = new Date(createdAt.getTime() + duration*60*1000)
+        
+        console.log(duration);
+        
 
+        console.log(createdAt);
+        console.log(expiresAt);
+        
         const room = await client.rooms.create({
             data:{
                 adminId,
@@ -51,6 +68,13 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
                 expiresAt: true
             }
         })
+        console.log(room.id);
+        
+
+        if(room){
+            console.log("db: room created");
+            
+        }
 
         rooms.set(room.id,{
             users: new Map(),

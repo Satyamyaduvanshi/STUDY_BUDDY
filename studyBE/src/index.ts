@@ -40,7 +40,13 @@ wss.on("connection", (socket: WebSocket) => {
     try {
       const message = JSON.parse(data.toString());
 
+      console.log(message);
+      
+
       if (message.event === "authentication" && message.token) {
+
+        console.log("inside authentication verification if/else");
+        
         const userId = await authenticate(socket, message.token);
 
         if (userId) {
@@ -54,19 +60,19 @@ wss.on("connection", (socket: WebSocket) => {
             })
           );
         } else {
-          console.log(" Authentication failed");
+          console.log(" Authentication failed 2");
           socket.send(
             JSON.stringify({
-              error: "Authentication failed",
+              error: "Authentication failed 2",
             })
           );
           socket.close();
         }
       } else {
-        console.log(" Authentication required");
+        console.log(" Authentication required 1");
         socket.send(
           JSON.stringify({
-            error: "Authentication required",
+            error: "Authentication required 1",
           })
         );
         socket.close();
@@ -84,6 +90,15 @@ wss.on("connection", (socket: WebSocket) => {
       const { event, roomId, duration, description, roomName } = JSON.parse(
         data.toString()
       );
+
+      console.log("roomId: ",roomId || "not right now");
+      console.log("duration: ",duration);
+      console.log("description: ",description);
+      console.log("roomName: ",roomName);
+      
+      
+      
+      
       const userId = (socket as any).userId;
 
       if (!userId) {
@@ -96,7 +111,7 @@ wss.on("connection", (socket: WebSocket) => {
 
       switch (event) {
         case "createRoom":
-          await createRoom(socket, userId, duration, description, roomName);
+          await createRoom(socket, userId, roomName, description,duration);
           break;
         case "joinRoom":
           await joinRoom(socket, roomId, userId);
