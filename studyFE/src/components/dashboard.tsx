@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 interface RoomProps {
     id: number;
@@ -78,6 +79,38 @@ const Dashboard = () => {
             <h1 className="text-xl font-bold">Welcome {name}! Let's Start Studying</h1>
 
             <div className="mt-4">
+
+                <form className="max-w-sm" >
+                    <div className="mb-5">
+                        <label 
+                        className=" block text-black mb-2 text-sm font-medium "
+                        >
+                            Room Name
+                        </label>
+                        <input type="text" required placeholder="study room name..." className="rounded-lg border p-2"/>
+                    </div>
+                    <div className="mb-5">
+                    <label 
+                        className=" block text-black mb-2 text-sm font-medium "
+                        >
+                           Description
+                        </label>
+                        <input type="text" required placeholder="description..." className="rounded-lg border p-2" />
+                    </div>
+                    <div className="mb-5">
+                    <label 
+                        className=" block text-black mb-2 text-sm font-medium "
+                        >
+                           Duration
+                        </label>
+                        <input type="number" required placeholder="1,2,3... mins" className="rounded-lg border p-2" />
+                    </div>
+
+                    <Button text="Create Room" variant="primary" />
+
+                </form>
+
+
                 <button className="p-2 bg-blue-500 text-white rounded" onClick={() => createRoom(60, "Study Room", "Maths Group")}>
                     Create Room
                 </button>
