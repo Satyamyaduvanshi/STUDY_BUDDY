@@ -1,17 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button";
+import React, { useEffect, useRef, useState } from "react";
+
 
 interface RoomProps {
-    id: number;
-    name: string;
-    description: string;
+    roomName: string,
+    description: string,
+    duration: number
 }
 
 const Dashboard = () => {
     const name = "Satyam";
     const socketRef = useRef<WebSocket | null>(null);
     const [rooms, setRooms] = useState<RoomProps[]>([]);
+    const [formsData,setFormData] = useState<RoomProps>({
+        roomName:"",
+        description:"",
+        duration:0
+    })
 
+    // ws 
     useEffect(() => {
         const ws = new WebSocket("ws://localhost:8080");
         socketRef.current = ws;
@@ -41,7 +47,7 @@ const Dashboard = () => {
             }
         };
 
-        ws.onerror = (error) => console.error("⚠️ WebSocket Error:", error);
+        ws.onerror = (event) => console.error("⚠️ WebSocket Error:", event.type);
         ws.onclose = () => console.log("⚠️ WebSocket Disconnected");
 
         return () => {
@@ -74,46 +80,91 @@ const Dashboard = () => {
         sendMessage({ event: "listRooms" });
     };
 
+    //-----------------------------------------------------------------------------------------------------
+    // Form
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+        setFormData({
+            ...formsData,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    function FormSubmit(e:React.ChangeEvent<HTMLInputElement| HTMLTextAreaElement>){
+        e.preventDefault()
+
+        const {roomName,description,duration} = formsData;
+
+        if(!roomName || !description || !duration){
+            alert("please fill in all fields of CreateRoom.")
+            return
+        }
+
+        createRoom(duration,description,roomName);
+    }
+
     return (
         <div className="relative h-dvh w-screen overflow-hidden p-4 mt-24">
             <h1 className="text-xl font-bold">Welcome {name}! Let's Start Studying</h1>
 
             <div className="mt-4">
 
-                <form className="max-w-sm" >
-                    <div className="mb-5">
-                        <label 
-                        className=" block text-black mb-2 text-sm font-medium "
-                        >
-                            Room Name
-                        </label>
-                        <input type="text" required placeholder="study room name..." className="rounded-lg border p-2"/>
-                    </div>
-                    <div className="mb-5">
-                    <label 
-                        className=" block text-black mb-2 text-sm font-medium "
-                        >
-                           Description
-                        </label>
-                        <input type="text" required placeholder="description..." className="rounded-lg border p-2" />
-                    </div>
-                    <div className="mb-5">
-                    <label 
-                        className=" block text-black mb-2 text-sm font-medium "
-                        >
-                           Duration
-                        </label>
-                        <input type="number" required placeholder="1,2,3... mins" className="rounded-lg border p-2" />
-                    </div>
+            <form className="max-w-sm space-y-5" onSubmit={FormSubmit}>
+                <div>
+                    <label htmlFor="roomName" className="block text-black text-sm font-medium mb-2">
+                      Room Name
+                    </label>
+                    <input
+                        id="roomName"
+                        name="roomName"
+                        type="text"
+                        value={formsData.roomName}
+                        onChange={handleChange}
+                        required
+                        placeholder="Study room name..."
+                        className="w-full rounded-lg border p-2"
+                    />
+                </div>
 
-                    <Button text="Create Room" variant="primary" />
+                <div>
+                    <label htmlFor="description" className="block text-black text-sm font-medium mb-2">
+                      Description
+                    </label>
+                    <input
+                        id="description"
+                        name="description"
+                        type="text"
+                        value={formsData.description}
+                        onChange={handleChange}
+                        required
+                        placeholder="Description..."
+                        className="w-full rounded-lg border p-2"
+                    />
+                </div>
 
+                <div>
+                    <label htmlFor="duration" className="block text-black text-sm font-medium mb-2">
+                        Duration (mins)
+                    </label>
+                    <input
+                        id="duration"
+                        name="duration"
+                        type="number"
+                        value={formsData.duration}
+                        onChange={handleChange}
+                        required
+                        placeholder="1, 2, 3..."
+                        className="w-full rounded-lg border p-2"
+                    />
+                </div>
+
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded">
+                    Create Room
+                </button>
                 </form>
 
 
-                <button className="p-2 bg-blue-500 text-white rounded" onClick={() => createRoom(60, "Study Room", "Maths Group")}>
-                    Create Room
-                </button>
+                
                 <button className="p-2 bg-green-500 text-white rounded ml-2" onClick={listRooms}>
                     List Rooms
                 </button>
