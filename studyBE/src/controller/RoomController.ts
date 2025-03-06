@@ -53,8 +53,12 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
 
         console.log(createdAt);
         console.log(expiresAt);
+        let room;
         
-        const room = await client.rooms.create({
+        if(true){
+            console.log("inside if/else of room creation");
+            
+        const inroom = await client.rooms.create({
             data:{
                 adminId,
                 duration,
@@ -68,7 +72,9 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
                 expiresAt: true
             }
         })
+        room = inroom
         console.log("room id after room creation",room.id);
+     }
         
 
         if(room){
