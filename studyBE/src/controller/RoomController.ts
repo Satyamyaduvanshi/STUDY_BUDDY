@@ -68,7 +68,7 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
                 expiresAt: true
             }
         })
-        console.log(room.id);
+        console.log("room id after room creation",room.id);
         
 
         if(room){
@@ -235,6 +235,7 @@ export async function listRooms(socket:WebSocket) {
         const activeRooms = await client.rooms.findMany({
             select: { 
                 id: true,
+                roomName:true,
                 description: true,
                 expiresAt: true 
             },

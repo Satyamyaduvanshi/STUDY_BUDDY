@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 
 
-interface RoomProps {
+interface RoomProps{
+    id: number,
+    roomName: string,
+    description: string,
+    duration: number
+
+}
+
+interface FormProps {
     roomName: string,
     description: string,
     duration: number
@@ -11,7 +19,7 @@ const Dashboard = () => {
     const name = "Satyam";
     const socketRef = useRef<WebSocket | null>(null);
     const [rooms, setRooms] = useState<RoomProps[]>([]);
-    const [formsData,setFormData] = useState<RoomProps>({
+    const [formsData,setFormData] = useState<FormProps>({
         roomName:"",
         description:"",
         duration:0
@@ -65,7 +73,7 @@ const Dashboard = () => {
     };
 
     const createRoom = (duration: number, description: string, roomName: string) => {
-        sendMessage({ event: "createRoom", duration, description, roomName });
+        sendMessage({ event: "createRoom", roomName, description, duration });
     };
 
     const joinRoom = (roomId: number) => {
@@ -83,14 +91,14 @@ const Dashboard = () => {
     //-----------------------------------------------------------------------------------------------------
     // Form
 
-    const handleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+    const handleChange = (e:React.ChangeEvent< HTMLInputElement | HTMLTextAreaElement>)=>{
         setFormData({
             ...formsData,
             [e.target.name]: e.target.value
         })
     }
 
-    function FormSubmit(e:React.ChangeEvent<HTMLInputElement| HTMLTextAreaElement>){
+    function FormSubmit(e:React.ChangeEvent<HTMLFormElement>){
         e.preventDefault()
 
         const {roomName,description,duration} = formsData;
@@ -175,7 +183,7 @@ const Dashboard = () => {
                 <ul>
                     {rooms.map((room) => (
                         <li key={room.id} className="mt-2 border p-2 rounded">
-                            {room.name} - {room.description}
+                            {room.roomName} - {room.description}
                             <button className="ml-2 bg-gray-500 text-white p-1 rounded" onClick={() => joinRoom(room.id)}>
                                 Join
                             </button>
