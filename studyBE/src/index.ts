@@ -91,13 +91,13 @@ wss.on("connection", (socket: WebSocket) => {
         data.toString()
       );
 
-      console.log(data);
+      // console.log(data);
       
 
-      console.log("roomId: ",roomId || "not given right now");
-      console.log("duration: ",duration);
-      console.log("description: ",description);
-      console.log("roomName: ",roomName);
+      // console.log("roomId: ",roomId || "not given right now");
+      // console.log("duration: ",duration);
+      // console.log("description: ",description);
+      // console.log("roomName: ",roomName);
       
       
       

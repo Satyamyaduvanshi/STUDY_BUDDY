@@ -40,40 +40,49 @@ export async function authenticate(socket: WebSocket, token: string) {
 }
 //*  create room 
 export async function createRoom(socket: WebSocket, adminId: number, roomName: string, description: string, duration: number) {
-    console.log("outside try/catch createRoom funcation");
+    //console.log("outside try/catch createRoom funcation");
     
     try {
-        console.log("inside try createRoom funcation");
+        //console.log("inside try createRoom funcation");
         
         const createdAt = new Date
         const expiresAt = new Date(createdAt.getTime() + duration*60*1000)
         
-        console.log(duration);
+        //console.log(duration);
         
 
-        console.log(createdAt);
-        console.log(expiresAt);
-        let room;
+//console.log(createdAt);
+        //console.log(expiresAt);
+        let room:any;
         
         if(true){
-            console.log("inside if/else of room creation");
+            //console.log("inside if/else of room creation");
+        try {
+
+            const inroom = await client.rooms.create({
+                data:{
+                    adminId,
+                    duration,
+                    roomName,
+                    description,
+                    expiresAt,
+                    createdAt
+                },
+                select:{
+                    id: true,
+                    expiresAt: true
+                }
+            })
+            room = inroom
+            console.log("room id after room creation",room.id);
             
-        const inroom = await client.rooms.create({
-            data:{
-                adminId,
-                duration,
-                roomName,
-                description,
-                expiresAt,
-                createdAt
-            },
-            select:{
-                id: true,
-                expiresAt: true
-            }
-        })
-        room = inroom
-        console.log("room id after room creation",room.id);
+        } catch (e) {
+            console.error(e);
+            
+            
+        }
+        
+        
      }
         
 

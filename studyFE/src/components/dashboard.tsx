@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 
 interface RoomProps{
@@ -92,10 +93,14 @@ const Dashboard = () => {
     // Form
 
     const handleChange = (e:React.ChangeEvent< HTMLInputElement | HTMLTextAreaElement>)=>{
+
+        const {name,value} = e.target
+        
         setFormData({
             ...formsData,
-            [e.target.name]: e.target.value
-        })
+            [name]: name === "duration" ? Number(value) : value
+        });
+        
     }
 
     function FormSubmit(e:React.ChangeEvent<HTMLFormElement>){
@@ -113,13 +118,13 @@ const Dashboard = () => {
 
     return (
         <div className="relative h-dvh w-screen overflow-hidden p-4 mt-24">
-            <h1 className="text-xl font-bold">Welcome {name}! Let's Start Studying</h1>
+            <h1 className="text-4xl font-bold pl-24 p-2">Hello {name}! </h1>
 
-            <div className="mt-4">
+            <div className="mt-4 ml-28 p-6">
 
-            <form className="max-w-sm space-y-5" onSubmit={FormSubmit}>
+            <form className="max-w-sm space-y-5 border rounded-xl p-6" onSubmit={FormSubmit}>
                 <div>
-                    <label htmlFor="roomName" className="block text-black text-sm font-medium mb-2">
+                    <label htmlFor="roomName" className="block text-black text-lg mb-2 font-bold">
                       Room Name
                     </label>
                     <input
@@ -135,7 +140,7 @@ const Dashboard = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="description" className="block text-black text-sm font-medium mb-2">
+                    <label htmlFor="description" className="block text-black text-lg mb-2 font-bold">
                       Description
                     </label>
                     <input
@@ -151,7 +156,7 @@ const Dashboard = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="duration" className="block text-black text-sm font-medium mb-2">
+                    <label htmlFor="duration" className="block text-black text-lg mb-2 font-bold">
                         Duration (mins)
                     </label>
                     <input
@@ -166,19 +171,19 @@ const Dashboard = () => {
                     />
                 </div>
 
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-                    Create Room
-                </button>
+                <Button type="submit" variant="primary" text="Create Room" ></Button>
+
                 </form>
 
+                <div/>
 
                 
-                <button className="p-2 bg-green-500 text-white rounded ml-2" onClick={listRooms}>
-                    List Rooms
-                </button>
+            
             </div>
 
-            <div className="mt-4">
+
+
+            {/* <div className="mt-4">
                 <h2 className="text-lg font-semibold">Available Rooms:</h2>
                 <ul>
                     {rooms.map((room) => (
@@ -190,11 +195,11 @@ const Dashboard = () => {
                         </li>
                     ))}
                 </ul>
-            </div>
+            </div> */}
 
-            <button className="p-2 bg-red-500 text-white rounded mt-4" onClick={leaveRoom}>
+            {/* <button className="p-2 bg-red-500 text-white rounded mt-4" onClick={leaveRoom}>
                 Leave Room
-            </button>
+            </button> */}
         </div>
     );
 };
