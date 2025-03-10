@@ -199,7 +199,6 @@ const Dashboard = () => {
                     <Button text="Leave Room" variant="primary" onClick={()=>( LeaveRoom())} />
                 </div>
     
-                {/* Empty space to balance the layout */}
                 <div></div>
             </div>
         </div>
