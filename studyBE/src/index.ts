@@ -40,12 +40,12 @@ wss.on("connection", (socket: WebSocket) => {
     try {
       const message = JSON.parse(data.toString());
 
-      console.log(message);
+      //console.log(message);
       
 
       if (message.event === "authentication" && message.token) {
 
-        console.log("inside authentication verification if/else");
+        //console.log("inside authentication verification if/else");
         
         const userId = await authenticate(socket, message.token);
 
@@ -60,7 +60,7 @@ wss.on("connection", (socket: WebSocket) => {
             })
           );
         } else {
-          console.log(" Authentication failed 2");
+          //console.log(" Authentication failed 2");
           socket.send(
             JSON.stringify({
               error: "Authentication failed 2",
@@ -69,7 +69,7 @@ wss.on("connection", (socket: WebSocket) => {
           socket.close();
         }
       } else {
-        console.log(" Authentication required 1");
+        //console.log(" Authentication required 1");
         socket.send(
           JSON.stringify({
             error: "Authentication required 1",

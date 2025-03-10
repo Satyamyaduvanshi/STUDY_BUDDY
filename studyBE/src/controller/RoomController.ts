@@ -74,7 +74,7 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
                 }
             })
             room = inroom
-            console.log("room id after room creation",room.id);
+            //console.log("room id after room creation",room.id);
             
         } catch (e) {
             console.error(e);
@@ -87,7 +87,7 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
         
 
         if(room){
-            console.log("db: room created");
+            //console.log("db: room created");
             
         }
 
@@ -145,18 +145,35 @@ export async function deletRooom(roomId:number) {
 export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
    
     try {
-        const room = await client.rooms.findUnique({
-            where:{
-                id: roomId
-            },
-            include:{
-                studySessions:{
-                    select:{
-                        id: true
+        let room;
+
+        try {
+
+            console.log("inside trycatch db creation");
+            
+            const inroom = await client.rooms.findUnique({
+                where:{
+                    id: roomId
+                },
+                include:{
+                    studySessions:{
+                        select:{
+                            id: true
+                        }
                     }
                 }
-            }
-        })
+            })
+
+            console.log("after db operation");
+            
+            room = inroom
+            
+        } catch (e) {
+            console.log("inside error log db creation log");
+            
+            console.error(e);
+        }
+        
     
         if(!room) return socket.send(JSON.stringify({
             error: "room not found"
@@ -167,13 +184,28 @@ export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
                 error: "room is full"
             }))
         }
-    
-        await client.studySession.create({
-            data:{
-                userId,
-                roomId
-            }
-        })
+
+        try {
+            console.log("DB: studysession creation start");
+            console.log(userId);
+            console.log(roomId);
+                        
+            
+            await client.studySession.create({
+                data:{
+                    userId,
+                    roomId
+                }
+            })
+
+            console.log("DB: studysession creation complete");
+            
+            
+        } catch (e) {
+            console.error(e);
+            
+        }
+        
 
         if(!rooms.has(roomId)){
             rooms.set(roomId,{

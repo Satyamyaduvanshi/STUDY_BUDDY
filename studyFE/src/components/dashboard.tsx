@@ -88,6 +88,10 @@ const Dashboard = () => {
         sendMessage({ event: "joinRoom", roomId: joinRoomBox });
     };
 
+    const LeaveRoom = () => {
+        sendMessage({event: "leaveRoom"})
+    }
+
     // Form Handlers
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -189,6 +193,10 @@ const Dashboard = () => {
                         />
                         <Button text="Join Room" variant="primary" classname="mt-4 w-full" type="submit" />
                     </form>
+                </div>
+
+                <div>
+                    <Button text="Leave Room" variant="primary" onClick={()=>( LeaveRoom())} />
                 </div>
     
                 {/* Empty space to balance the layout */}
