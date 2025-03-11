@@ -199,7 +199,7 @@ const Dashboard = () => {
                     <Button text="Leave Room" variant="primary" onClick={()=>( LeaveRoom())} />
                 </div>
     
-                <div></div>
+                
             </div>
         </div>
     );
