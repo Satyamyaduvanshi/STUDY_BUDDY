@@ -178,7 +178,7 @@ const Dashboard = () => {
                     </form>
                 </div>
     
-                {/* Join Room Form (Center, Large) */}
+                
                 <div className="p-4 flex justify-center scale-150">
                     <form className="border p-8 rounded-lg w-96 shadow-lg bg-white" onSubmit={handleJoinSubmit}>
                         <h2 className="text-2xl font-bold text-center mb-4">Join Room</h2>
