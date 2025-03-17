@@ -15,7 +15,8 @@ interface FormProps {
 }
 
 const Dashboard = () => {
-    const name = "Satyam";
+    
+    const [name , setName]= useState<string>("")
     const socketRef = useRef<WebSocket | null>(null);
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const [formData, setFormData] = useState<FormProps>({ roomName: "", description: "", duration: 0 });
@@ -43,6 +44,11 @@ const Dashboard = () => {
 
                 if (data.message === "Authenticated") {
                     console.log(`✅ User ${data.userId} authenticated successfully`);
+                    console.log(`User's name : ${data.name} `);
+                    
+                    setName(data.name);
+
+
                 } else if (data.error) {
                     console.error("❌ Error:", data.error);
                 } else if (data.event === "roomList") {
@@ -114,6 +120,7 @@ const Dashboard = () => {
         e.preventDefault();
         joinRoom();
     };
+
 
     return (
         <div className="relative h-dvh w-screen overflow-hidden p-4 mt-24">

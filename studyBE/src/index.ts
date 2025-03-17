@@ -11,8 +11,11 @@ import {
   listRooms,
 } from "./controller/RoomController";
 
+import { PrismaClient } from "@prisma/client";
+
 dotenv.config();
 const app = express();
+const client = new PrismaClient();
 
 //  Enable CORS for frontend (React on port 5173)
 app.use(
@@ -53,12 +56,34 @@ wss.on("connection", (socket: WebSocket) => {
           console.log(` User ${userId} authenticated`);
           (socket as any).userId = userId; // Save user ID on the socket
 
-          socket.send(
-            JSON.stringify({
-              message: "Authenticated",
-              userId,
-            })
-          );
+          try {
+            const user = await client.user.findUnique({
+              where:{
+                id: userId
+              },
+              select:{
+                name: true
+              }
+            });
+
+            console.log(`this is user name ${user?.name}`);
+            
+
+            socket.send(
+              JSON.stringify({
+                message: "Authenticated",
+                userId,
+                name:user?.name
+              })
+            );
+
+          } catch (e) {
+            console.error(e);
+          }
+         
+
+
+        
         } else {
           //console.log(" Authentication failed 2");
           socket.send(
