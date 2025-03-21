@@ -32,11 +32,12 @@ const Dashboard = () => {
 
     const joinRoom = () => {
         if (!joinRoomBox) {
+            console.log("room id is not given");
             alert("Please enter a valid Room ID.");
             return;
         }
     
-        nagivate(`/room/${joinRoomBox}`);
+        nagivate(`/room/:${joinRoomBox}`);
     };
     
 

@@ -9,21 +9,19 @@ dotevn.config();
 
 
 const client = new PrismaClient();
-const rooms = new Map<number,{users: Map<number,WebSocket>;expiration: NodeJS.Timeout }>();
-const jwt_secret = process.env.JWT_SECRET || " "
+export const rooms = new Map<number,{users: Map<number,WebSocket>;expiration: NodeJS.Timeout }>();
 const MAX_ROOM_CAPACITY = 10;
+
+if(!process.env.JWT_SECRET){
+    throw new Error("JWT_SECRET NOT DEFINE IN ROOMCONTROLLER");
+}
+const jwt_secret = process.env.JWT_SECRET
 
 //* authentication in websocket
 export async function authenticate(socket: WebSocket, token: string) {
     try {
-        console.log("inside authenticate funcation");
-        
+        console.log("inside authenticate funcation");     
         const realToken = token.split(" ")[1]
-
-        
-        
-        
-        
         const decode = jwt.verify(realToken,jwt_secret) as { id:number }
         if(!decode || !decode.id){
             throw new Error("invalid token");
@@ -121,6 +119,11 @@ export async function deletRooom(roomId:number) {
                 id:roomId
             }
         })
+        await client.studySession.deleteMany({
+            where: {
+              roomId: roomId
+            }
+        });
 
         if(rooms.has(roomId)){
             rooms.get(roomId)!.users.forEach((socket)=>{
@@ -223,6 +226,15 @@ export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
             roomId,
             expiresAt:  room.expiresAt
         }))
+
+        rooms.get(roomId)!.users.forEach((userSocket, id) => {
+            userSocket.send(JSON.stringify({
+                message: "User joined",
+                userId
+            }));
+        });
+        
+          
         
     } catch (e) {
         socket.send(JSON.stringify({
@@ -237,7 +249,7 @@ export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
 export async function leaveRoom(socket:WebSocket, userId: number) {
 
     try {
-        const session = await client.studySession.findUnique({
+        const session = await client.studySession.findFirst({
             where:{
                 userId
             }
@@ -247,11 +259,10 @@ export async function leaveRoom(socket:WebSocket, userId: number) {
             error: "user not in any room"
         }))
 
-        await client.studySession.delete({
-            where:{
-                userId
-            }
-        })
+        await client.studySession.deleteMany({
+            where: { userId }
+        });
+        
         const room = rooms.get(session.roomId);
         if(room){
             room.users.delete(userId);
@@ -306,4 +317,32 @@ export async function listRooms(socket:WebSocket) {
         
     }
     
+}
+
+//message
+
+export async function handleChatMessage(roomId: number, userId: number, message: string) {
+    if (!rooms.has(roomId)) {
+        return;
+    }
+
+    // Optional: Save message in DB if you want chat history persistence
+    await client.chatMessage.create({
+        data: {
+            roomId,
+            userId,
+            message,
+            sentAt: new Date()
+        }
+    });
+
+    // Broadcast message to all users in room
+    rooms.get(roomId)!.users.forEach((userSocket, id) => {
+        userSocket.send(JSON.stringify({
+            event: "newMessage",
+            roomId,
+            message,
+            userId
+        }));
+    });
 }

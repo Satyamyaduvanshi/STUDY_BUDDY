@@ -9,7 +9,10 @@ import {
   joinRoom,
   leaveRoom,
   listRooms,
+  rooms,
+  handleChatMessage
 } from "./controller/RoomController";
+
 
 import { PrismaClient } from "@prisma/client";
 
@@ -35,7 +38,11 @@ app.listen(3000, () => console.log("REST API running on port 3000"));
 // WebSocket Server
 const wss = new WebSocketServer({ port: 8080 });
 
-wss.on("connection", (socket: WebSocket) => {
+interface AuthenticatedSocket extends WebSocket {
+  userId?: number;
+}
+
+wss.on("connection", (socket: AuthenticatedSocket) => {
   console.log(" New WebSocket connection established");
 
   // First message must be authentication
@@ -54,7 +61,7 @@ wss.on("connection", (socket: WebSocket) => {
 
         if (userId) {
           console.log(` User ${userId} authenticated`);
-          (socket as any).userId = userId; // Save user ID on the socket
+          socket.userId = userId; // Save user ID on the socket
 
           try {
             const user = await client.user.findUnique({
@@ -112,7 +119,7 @@ wss.on("connection", (socket: WebSocket) => {
   //  Handle other WebSocket events
   socket.on("message", async (data) => {
     try {
-      const { event, roomId, duration, description, roomName } = JSON.parse(
+      const { event, roomId, duration, description, roomName,message } = JSON.parse(
         data.toString()
       );
 
@@ -127,7 +134,7 @@ wss.on("connection", (socket: WebSocket) => {
       
       
       
-      const userId = (socket as any).userId;
+      const userId = socket.userId;
 
       if (!userId) {
         return socket.send(
@@ -150,6 +157,8 @@ wss.on("connection", (socket: WebSocket) => {
         case "listRooms":
           await listRooms(socket);
           break;
+        case "sendMessage":
+          await handleChatMessage(roomId,userId,message)
         default:
           socket.send(
             JSON.stringify({
@@ -168,9 +177,26 @@ wss.on("connection", (socket: WebSocket) => {
   });
 
   //  Handle disconnection
-  socket.on("close", () => {
-    console.log("🔌 User disconnected");
+  socket.on("close", async () => {
+    console.log("Socket disconnected:", socket.userId);
+
+    const userId = (socket as any).userId;
+    if (userId) {
+    rooms.forEach((room, roomId) => {
+    if (room.users.has(userId)) {
+      room.users.delete(userId);
+    }
   });
+
+  await client.studySession.deleteMany({
+    where: { userId }
+  });
+
+  console.log(`Cleaned up user ${userId} on disconnect`);
+}
+
+  });
+  
 });
 
 console.log(" WebSocket server running on port 8080");

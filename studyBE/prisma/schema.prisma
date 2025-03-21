@@ -13,6 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+//   id            Int            @id @default(autoincrement())
+//   name          String
+//   email         String         @unique
+//   password      String
+//   profilePic    String?        // Optional profile picture URL
+
+//   // One user can create multiple rooms
+//   roomsCreated  Rooms[]        @relation("RoomCreator")
+
+//   // A user can be in only one room at a time
+//   studySession  StudySession? 
+// }
+
+// model Rooms {
+//   id           Int       @id @default(autoincrement())
+//   adminId      Int       // Foreign key to User who created the room
+//   roomName     String
+//   description  String
+//   createdAt    DateTime  @default(now())
+//   duration     Int       // Duration in minutes (set by admin)
+
+//   // When a room expires, it will be deleted
+//   expiresAt    DateTime  // Store end time = createdAt + duration:
+
+//   // Room admin
+//   adminUser    User      @relation("RoomCreator", fields: [adminId], references: [id])
+
+//   // Users who joined the room (One-to-Many instead of Many-to-Many)
+//   studySessions StudySession[]
+// }
+
+// // A user can only be in one room at a time (One-to-Many)
+// model StudySession {
+//   id         Int      @id @default(autoincrement())
+//   userId     Int      @unique  // Ensures a user can join only one room at a time
+//   roomId     Int
+//   joinedAt   DateTime @default(now())
+//   studyTime  Int      @default(0) // Time studied (tracked in WebSocket events)
+
+//   user       User     @relation(fields: [userId], references: [id])
+//   room       Rooms    @relation(fields: [roomId], references: [id])
+// }
+
+
+
 model User {
   id            Int            @id @default(autoincrement())
   name          String
@@ -24,35 +70,50 @@ model User {
   roomsCreated  Rooms[]        @relation("RoomCreator")
 
   // A user can be in only one room at a time
-  studySession  StudySession? 
+  studySession  StudySession?
+
+  // One user can send multiple chat messages
+  chatMessages  ChatMessage[]
 }
 
 model Rooms {
   id           Int       @id @default(autoincrement())
-  adminId      Int       // Foreign key to User who created the room
+  adminId      Int
   roomName     String
   description  String
   createdAt    DateTime  @default(now())
-  duration     Int       // Duration in minutes (set by admin)
+  duration     Int
+  expiresAt    DateTime
 
-  // When a room expires, it will be deleted
-  expiresAt    DateTime  // Store end time = createdAt + duration:
+  adminUser    User      @relation("RoomCreator", fields: [adminId], references: [id], onDelete: Cascade)
 
-  // Room admin
-  adminUser    User      @relation("RoomCreator", fields: [adminId], references: [id])
-
-  // Users who joined the room (One-to-Many instead of Many-to-Many)
   studySessions StudySession[]
+  chatMessages   ChatMessage[]
 }
 
-// A user can only be in one room at a time (One-to-Many)
 model StudySession {
   id         Int      @id @default(autoincrement())
-  userId     Int      @unique  // Ensures a user can join only one room at a time
+  userId     Int      @unique
   roomId     Int
   joinedAt   DateTime @default(now())
-  studyTime  Int      @default(0) // Time studied (tracked in WebSocket events)
+  studyTime  Int      @default(0)
 
-  user       User     @relation(fields: [userId], references: [id])
-  room       Rooms    @relation(fields: [roomId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room       Rooms    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
 }
+
+model ChatMessage {
+  id      Int      @id @default(autoincrement())
+  roomId  Int
+  userId  Int
+  message String
+  sentAt  DateTime @default(now())
+
+  room    Rooms    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+}
+
