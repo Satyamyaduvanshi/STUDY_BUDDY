@@ -6,6 +6,8 @@ import Dashboard from "./components/dashboard";
 import Profile from "./components/profile";
 import PrivateRoute from "./components/protected";
 import { NavBar } from "./components/mainNavBar";
+import Room from "./components/Room";
+import { WebSocketProvider } from "./hooks/WebSocketContext";
 
 function App() {
     return (
@@ -19,7 +21,10 @@ function App() {
                     <Route path="/profile" element={<Profile/>}/>
                     <Route element={<NavBar/>}>
                     <Route element={<PrivateRoute/>}>
+                     <WebSocketProvider>
                         <Route path="/" element={<Dashboard/>}/>
+                        <Route path="/room/:id" element={<Room/>}/>
+                     </WebSocketProvider>
                     </Route>
                     </Route>
 

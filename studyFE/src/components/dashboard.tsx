@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { useWebSocket } from "./hooks/useWebSocket";
+import { useWebSocket } from "./hooks/webSocketContext";
+import { useNavigate } from "react-router-dom";
 
 interface FormProps {
     roomName: string;
@@ -9,6 +10,9 @@ interface FormProps {
 }
 
 const Dashboard = () => {
+
+    const nagivate = useNavigate();
+    
     const { sendMessage, rooms, username } = useWebSocket();
 
     const [formData, setFormData] = useState<FormProps>({
@@ -31,13 +35,12 @@ const Dashboard = () => {
             alert("Please enter a valid Room ID.");
             return;
         }
-        sendMessage({ event: "joinRoom", roomId: joinRoomBox });
+    
+        nagivate(`/room/${joinRoomBox}`);
     };
+    
 
-    const leaveRoom = () => {
-        sendMessage({ event: "leaveRoom" });
-    };
-
+   
     // Form Handlers
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

@@ -20,7 +20,6 @@ export async function authenticate(socket: WebSocket, token: string) {
         
         const realToken = token.split(" ")[1]
 
-        console.log(realToken);
         
         
         
@@ -51,8 +50,9 @@ export async function createRoom(socket: WebSocket, adminId: number, roomName: s
         //console.log(duration);
         
 
-//console.log(createdAt);
+        //console.log(createdAt);
         //console.log(expiresAt);
+        
         let room:any;
         
         if(true){
