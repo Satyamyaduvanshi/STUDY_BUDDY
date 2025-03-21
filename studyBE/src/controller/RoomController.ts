@@ -327,14 +327,14 @@ export async function handleChatMessage(roomId: number, userId: number, message:
     }
 
     // Optional: Save message in DB if you want chat history persistence
-    await client.chatMessage.create({
-        data: {
-            roomId,
-            userId,
-            message,
-            sentAt: new Date()
-        }
-    });
+    // await client.chatMessage.create({
+    //     data: {
+    //         roomId,
+    //         userId,
+    //         message,
+    //         sentAt: new Date()
+    //     }
+    // });
 
     // Broadcast message to all users in room
     rooms.get(roomId)!.users.forEach((userSocket, id) => {
