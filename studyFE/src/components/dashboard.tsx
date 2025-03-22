@@ -10,9 +10,7 @@ interface FormProps {
 }
 
 const Dashboard = () => {
-
-    const nagivate = useNavigate();
-    
+    const navigate = useNavigate();
     const { sendMessage, rooms, username } = useWebSocket();
 
     const [formData, setFormData] = useState<FormProps>({
@@ -20,8 +18,10 @@ const Dashboard = () => {
         description: "",
         duration: 0,
     });
-    const [joinRoomBox, setJoinRoomFieldBox] = useState<number | "">("");
 
+    const [joinRoomId, setJoinRoomId] = useState<number | "">("");
+
+    // Create Room
     const createRoom = () => {
         if (!formData.roomName || !formData.description || formData.duration <= 0) {
             alert("Please fill in all fields correctly.");
@@ -30,19 +30,16 @@ const Dashboard = () => {
         sendMessage({ event: "createRoom", ...formData });
     };
 
+    // Join Room
     const joinRoom = () => {
-        if (!joinRoomBox) {
-            console.log("room id is not given");
+        if (!joinRoomId) {
             alert("Please enter a valid Room ID.");
             return;
         }
-    
-        nagivate(`/room/:${joinRoomBox}`);
+        navigate(`/room/${joinRoomId}`);
     };
-    
 
-   
-    // Form Handlers
+    // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -52,9 +49,10 @@ const Dashboard = () => {
     };
 
     const handleJoinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setJoinRoomFieldBox(e.target.value ? Number(e.target.value) : "");
+        setJoinRoomId(e.target.value ? Number(e.target.value) : "");
     };
 
+    // Submit handlers
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         createRoom();
@@ -135,7 +133,7 @@ const Dashboard = () => {
                         <input
                             type="number"
                             id="joinRoom"
-                            value={joinRoomBox}
+                            value={joinRoomId}
                             onChange={handleJoinChange}
                             required
                             placeholder="Enter Room ID"
