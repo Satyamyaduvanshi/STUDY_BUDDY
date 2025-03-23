@@ -79,7 +79,7 @@ const Room = () => {
       <h2 className="text-2xl mb-4">Room ID: {mainRoomId}</h2>
 
       {/* Central Timer */}
-      <div className="text-5xl font-bold mb-6 text-purple-700">
+      <div className="text-5xl font-bold mb-6 text-green-800">
         {remainingTime > 0 ? formatTime(remainingTime) : "Time's Up!"}
       </div>
 

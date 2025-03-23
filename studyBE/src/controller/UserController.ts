@@ -158,6 +158,8 @@ export const deleteUser = async(req:CustomRequest,res:Response)=>{
 
 export const profile = async(req:CustomRequest,res:Response)=>{
     try {
+        console.log(req.id);
+        
         const response = await client.user.findFirst({
             where:{
                 id: req.id
@@ -172,6 +174,8 @@ export const profile = async(req:CustomRequest,res:Response)=>{
             })
             return;
         }
+        console.log(response);
+        
         res.status(200).json({
             user: response
         })

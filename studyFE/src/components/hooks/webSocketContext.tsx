@@ -7,7 +7,7 @@ interface RoomProps {
   roomName: string;
   description: string;
   duration: number;
-  expiresAt?: string; // Added for expiration time
+  expiresAt: string; // Added for expiration time
 }
 
 interface MessageProps {
