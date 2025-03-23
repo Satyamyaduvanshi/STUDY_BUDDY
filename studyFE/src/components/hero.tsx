@@ -94,7 +94,7 @@ const Hero = () => {
           {/* Paragraph */}
           <p
             ref={paragraphRef}
-            className="hidden sm:block mt-2 mb-4 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-white drop-shadow-lg text-left"
+            className="hidden sm:block mt-2 mb-4 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-black drop-shadow-lg text-left"
           >
             Hop into a room or make your own, sync up with a group timer, and chat while you all hustle.
             <div>

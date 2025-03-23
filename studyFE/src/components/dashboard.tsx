@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { useWebSocket } from "./hooks/webSocketContext";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface FormProps {
   roomName: string;
@@ -20,6 +21,14 @@ const Dashboard = () => {
   });
 
   const [joinRoomId, setJoinRoomId] = useState<number | "">("");
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting("Good Morning");
+    else if (hour < 18) setGreeting("Good Afternoon");
+    else setGreeting("Good Evening");
+  }, []);
 
   const sortedRooms = useMemo(() => {
     return rooms ? [...rooms].sort((a, b) => b.id - a.id) : [];
@@ -33,12 +42,13 @@ const Dashboard = () => {
     sendMessage({ event: "createRoom", ...formData });
   };
 
-  const joinRoom = () => {
-    if (!joinRoomId) {
+  const joinRoom = (id?: number) => {
+    const targetId = id !== undefined ? id : joinRoomId;
+    if (!targetId) {
       alert("Please enter a valid Room ID.");
       return;
     }
-    navigate(`/room/${joinRoomId}`);
+    navigate(`/room/${targetId}`);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -72,125 +82,113 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="relative h-dvh w-screen overflow-hidden p-4 mt-24">
-      <h1 className="text-4xl font-bold text-center p-4">Hello {username}!</h1>
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto bg-gradient-to-b from-black via-green-800 to-black">
+     
+      <motion.div
+        className="absolute top-24 left-8 text-white text-4xl md:text-5xl font-bold ml-12 md:ml-24 mt-20"
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+      >
+        {greeting}, {username}!
+      </motion.div>
 
-      <div className="grid grid-cols-3 gap-8 items-start px-20">
-        {/* Create Room Form */}
-        <div className="p-4 scale-110">
-          <form className="space-y-5 border rounded-xl p-6 w-64" onSubmit={handleFormSubmit}>
-            <h2 className="text-lg font-semibold text-center">Create Room</h2>
+      <motion.div
+        className="mt-48 md:mt-48 p-8 md:p-16 flex flex-col items-center justify-center w-11/12 md:w-1/2"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Join Room</h2>
+        <form className="flex flex-col items-center w-full md:w-96" onSubmit={handleJoinSubmit}>
+          <input
+            type="number"
+            id="joinRoom"
+            value={joinRoomId}
+            onChange={handleJoinChange}
+            required
+            placeholder="Enter Room ID"
+            className="w-full rounded-xl p-4 text-lg bg-white/90 text-black mb-6 border-none"
+          />
+          <Button text="Join Room" variant="primary" classname="w-full" type="submit" />
+        </form>
+      </motion.div>
 
-            <div>
-              <label htmlFor="roomName" className="block text-black text-sm mb-1 font-bold">
-                Room Name
-              </label>
-              <input
-                id="roomName"
-                name="roomName"
-                type="text"
-                value={formData.roomName}
-                onChange={handleChange}
-                required
-                placeholder="Study room name..."
-                className="w-full rounded-lg border p-2"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-black text-sm mb-1 font-bold">
-                Description
-              </label>
-              <input
-                id="description"
-                name="description"
-                type="text"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                placeholder="Description..."
-                className="w-full rounded-lg border p-2"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="duration" className="block text-black text-sm mb-1 font-bold">
-                Duration (mins)
-              </label>
-              <input
-                id="duration"
-                name="duration"
-                type="number"
-                value={formData.duration}
-                onChange={handleChange}
-                required
-                min="1"
-                placeholder="1, 2, 3..."
-                className="w-full rounded-lg border p-2"
-              />
-            </div>
-
-            <Button type="submit" text="Create Room" variant="primary" />
-          </form>
-        </div>
-
-        {/* Join Room Form */}
-        <div className="p-4 flex justify-center scale-150 mt-24 mr-24">
-          <form className="border p-8 rounded-lg w-96 shadow-lg bg-white" onSubmit={handleJoinSubmit}>
-            <h2 className="text-2xl font-bold text-center mb-4">Join Room</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-4 md:px-12 mt-32 md:mt-64 mb-12">
+        
+        <motion.div
+          className="rounded-2xl p-6 shadow-lg flex flex-col border justify-center items-center bg-white/10 backdrop-blur-md"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          <h2 className="text-xl font-bold mb-4 text-white">Create Room</h2>
+          <form id="createRoom" className="space-y-4 w-full md:w-80" onSubmit={handleFormSubmit}>
             <input
-              type="number"
-              id="joinRoom"
-              value={joinRoomId}
-              onChange={handleJoinChange}
+              id="roomName"
+              name="roomName"
+              type="text"
+              value={formData.roomName}
+              onChange={handleChange}
               required
-              placeholder="Enter Room ID"
-              className="w-full rounded-lg border p-3 text-lg"
+              placeholder="Room Name"
+              className="w-full rounded-lg border p-3"
             />
-            <Button text="Join Room" variant="primary" classname="mt-4 w-full" type="submit" />
+            <input
+              id="description"
+              name="description"
+              type="text"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              placeholder="Description"
+              className="w-full rounded-lg border p-3"
+            />
+            <input
+              id="duration"
+              name="duration"
+              type="number"
+              value={formData.duration}
+              onChange={handleChange}
+              required
+              min="1"
+              placeholder="Duration (mins)"
+              className="w-full rounded-lg border p-3"
+            />
+            <Button type="submit" text="Create Room" variant="primary" classname="w-full" />
           </form>
-        </div>
+        </motion.div>
 
-        {/* Available Rooms */}
-        <div className="flex justify-end p-4">
-          <div className="w-[450px] max-h-[700px] p-6 rounded-lg shadow-lg overflow-y-auto scrollbar-hide">
-            <h2 className="text-2xl font-bold mb-4 absolute">Available Rooms</h2>
-
-            {sortedRooms.length === 0 ? (
-              <p className="text-gray-600 mt-10">No rooms available.</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 mt-12">
-                {sortedRooms.map((room, i) => (
-                  <div key={i} className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center">
-                    <h3 className="font-semibold text-lg">{room.roomName}</h3>
-                    <p className="text-gray-600">{room.description}</p>
-                    <p className="text-sm text-gray-500">
-                      Expires in: {getMinutesLeft(room.expiresAt)} mins
-                    </p>
-                    <Button
-                      text="Join Room"
-                      variant="primary"
-                      onClick={() => navigate(`/room/${room.id}`)}
-                      classname="mt-2"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+       
+        <motion.div
+          className="rounded-2xl p-6 shadow-lg flex flex-col items-center bg-white/10 backdrop-blur-md"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <h2 id="listRooms" className="text-xl font-bold mb-4 text-white">Available Rooms</h2>
+          {sortedRooms.length > 0 ? (
+            <div className="space-y-4 w-full md:w-80 text-center">
+              {sortedRooms.map((room) => (
+                <div key={room.id} className="bg-black rounded-lg p-4 shadow text-white">
+                  <p><strong>ID:</strong> {room.id}</p>
+                  <p><strong>Name:</strong> {room.roomName}</p>
+                  <p><strong>Description:</strong> {room.description}</p>
+                  <p><strong>Expires in:</strong> {getMinutesLeft(room.expiresAt)} mins</p>
+                  <Button
+                    text="Join"
+                    variant="primary"
+                    classname="w-full mt-2"
+                    onClick={() => joinRoom(room.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-white">No available rooms yet.</p>
+          )}
+        </motion.div>
       </div>
-
-      {/* Hide scrollbar style */}
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 };

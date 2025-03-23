@@ -91,19 +91,23 @@ export function NavBar() {
     <>
       <nav
         id="nav"
-        className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[90%] z-50 border border-black rounded-full backdrop-blur-sm  "
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-[1200px] z-50 border border-black rounded-full 
+        bg-gradient-to-r from-[rgba(0,0,0,0.6)] via-[rgba(34,69,78,0.6)] to-[rgba(0,0,0,0.6)] 
+        backdrop-blur shadow-lg px-4 sm:px-6 md:px-10"
       >
-        <div className="flex justify-between items-center mx-auto py-2 px-4 md:py-3 md:px-8">
+        <div className="flex justify-between items-center py-2 sm:py-3 md:py-4">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center flex-shrink-0">
-            <div className=" text-black font-bold font-mono tracking-wide text-2xl md:text-4xl transition-transform duration-500 transform hover:scale-105">
+          <Link to="/" className="flex items-center flex-shrink-0">
+            <div className=" text-white font-bold font-mono tracking-wide 
+              text-[clamp(1.2rem,3vw,2rem)] transition-transform duration-500 transform hover:scale-105">
               Study<span className="text-green-500 uppercase">Buddy</span>
             </div>
           </Link>
 
           {/* Links and Profile */}
-          <div className="flex items-center space-x-4 md:space-x-8 font-mono text-black text-base md:text-lg">
-            <div className="hidden md:flex space-x-6">
+          <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-8 font-mono text-white text-[clamp(0.8rem,2.5vw,1.1rem)]">
+            {/* Desktop links */}
+            <div className="hidden md:flex space-x-4 lg:space-x-6">
               <a href="#createRoom" className="hover:text-green-500 transform hover:scale-105 transition-transform duration-300 ease-in-out">
                 Create Room
               </a>
@@ -126,12 +130,12 @@ export function NavBar() {
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-7 w-56 bg-white rounded-lg p-4 text-black z-50 border shadow-lg transition-all duration-300">
+                <div className="absolute right-0 mt-9 w-48 sm:w-56 bg-white rounded-lg p-4 text-black z-50 border shadow-lg transition-all duration-300">
                   {profile ? (
                     <>
                       <div className="mb-2">
                         <p className="font-semibold text-sm uppercase">👋 {profile.name}</p>
-                        <p className="text-xs pt-2 text-gray-500">{profile.email}</p>
+                        <p className="text-xs pt-2 text-gray-500 break-words">{profile.email}</p>
                       </div>
                       <hr className="my-2" />
                       <div className="block md:hidden">
@@ -146,14 +150,14 @@ export function NavBar() {
                       <Button
                         text="Delete Account"
                         variant="secondary"
-                        classname="w-full text-red-800 hover:bg-red-100"
+                        classname="w-full text-red-800 hover:bg-red-100 text-xs sm:text-sm"
                         onClick={() => setConfirmModalOpen(true)}
                       />
                       <Button
-                      startIcon={<LogOut size={16} />}
+                        startIcon={<LogOut size={16} />}
                         text="Logout"
                         variant="primary"
-                        classname="w-full text-black hover:bg-green-100"
+                        classname="w-full text-black hover:bg-green-100 text-xs sm:text-sm"
                         onClick={logout}
                       />
                     </>
@@ -169,27 +173,26 @@ export function NavBar() {
 
       {/* Confirmation Modal */}
       {confirmModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[1000] border-black">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[1000] ">
           <div
             ref={modalRef}
-            className="bg-white p-6 rounded-xl shadow-xl text-center w-80"
+            className="bg-white p-4 sm:p-6 rounded-xl shadow-xl text-center w-72 sm:w-80"
           >
-            <h2 className="text-xl font-bold mb-4 text-black">Are you sure?</h2>
-            <p className="mb-6 text-gray-600">Do you want to delete your account?</p>
-            <div className="flex justify-around">
-
+            <h2 className="text-lg sm:text-xl font-bold mb-3 text-black">Are you sure?</h2>
+            <p className="mb-5 text-gray-600 text-sm sm:text-base">Do you want to delete your account?</p>
+            <div className="flex justify-around gap-2">
               <Button
-              text="Nope"
-              variant="secondary"
-              onClick={()=>setConfirmModalOpen(false)}
-              
+                text="Nope"
+                variant="secondary"
+                classname="text-xs sm:text-sm px-3 sm:px-4"
+                onClick={() => setConfirmModalOpen(false)}
               />
               <Button
-              text="Yes"
-              variant="primary"
-              onClick={deleteUser}
+                text="Yes"
+                variant="primary"
+                classname="text-xs sm:text-sm px-3 sm:px-4"
+                onClick={deleteUser}
               />
-              
             </div>
           </div>
         </div>

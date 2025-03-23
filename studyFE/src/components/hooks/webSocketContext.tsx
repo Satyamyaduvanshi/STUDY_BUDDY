@@ -7,7 +7,7 @@ interface RoomProps {
   roomName: string;
   description: string;
   duration: number;
-  expiresAt: string; // Added for expiration time
+  expiresAt: string;
 }
 
 interface MessageProps {
@@ -64,54 +64,46 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         const data = JSON.parse(event.data);
         console.log("📩 Received:", data);
 
-        // Handle authenticated
         if (data.message === "Authenticated") {
           console.log(`✅ User ${data.userId} authenticated successfully`);
           setUsername(data.name);
-          ws.send(JSON.stringify({event:"listRooms"}))
+          ws.send(JSON.stringify({ event: "listRooms" }));
+        }else if (data.event === "roomJoined") {
+          setCurrentRoom({
+            id: data.roomId,
+            roomName: data.roomName || "Room",
+            description: data.description || "",
+            duration: data.duration || 0,
+            expiresAt: data.expiresAt, // Ensure this is included
+          });
+          console.log("🟢 Joined Room:", data);
         }
-
-        // Handle errors
         else if (data.error) {
           console.error("❌ Error:", data.error);
-
           if (data.error === "room not found") {
             Swal.fire({
               icon: "error",
               title: "Room Not Found!",
               text: "Taking you back...",
-              background: "#038478",
-              color: "#800020",
               showConfirmButton: false,
               timer: 2500,
               timerProgressBar: true,
             });
             setTimeout(() => navigate("/"), 2500);
           }
-        }
-
-        // Handle room list
-        else if (data.event === "listRooms") {
+        } else if (data.event === "listRooms") {
           setRooms(data.rooms);
-        }
-
-        // Handle new messages
-        else if (data.event === "newMessage") {
-          setMessages((prev) => [...prev, data.message]);
-        }
-
-        // Handle room joined (main part!)
-        else if (data.event === "roomJoined") {
-          /**
-           * Assuming backend sends something like:
-           * {
-           *   event: "roomJoined",
-           *   room: { id, roomName, description, duration, expiresAt }
-           * }
-           */
-          setCurrentRoom(data.room);
-          console.log("🟢 Joined Room:", data.room);
-        }
+        } else if (data.event === "newMessage") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              roomId: data.roomId,
+              userId: data.userId,
+              userName: data.userName, // Ensure this is included
+              message: data.message,
+            },
+          ]);
+        } 
       } catch (err) {
         console.error("❌ Failed to parse WebSocket message:", err);
       }
@@ -126,7 +118,6 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     };
   }, [navigate]);
 
-  // Send Message Function
   const sendMessage = (message: object) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify(message));
@@ -137,9 +128,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   return (
-    <WebSocketContext.Provider
-      value={{ sendMessage, rooms, username, messages, currentRoom, setCurrentRoom }}
-    >
+    <WebSocketContext.Provider value={{ sendMessage, rooms, username, messages, currentRoom, setCurrentRoom }}>
       {children}
     </WebSocketContext.Provider>
   );

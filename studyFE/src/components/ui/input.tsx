@@ -14,7 +14,7 @@ interface InputProps {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`border p-2 rounded ${className}`}
+        className={`border p-2 rounded-full w-full ${className}`}
         required={required} 
       />
     );

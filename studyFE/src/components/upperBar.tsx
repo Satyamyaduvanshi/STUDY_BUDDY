@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import gsap from "gsap";
@@ -34,11 +34,13 @@ export function Bar() {
     return (
         <nav
             id="nav"
-            className="fixed top-4 left-4 right-4 z-50 rounded-full border border-gray-700 bg-black/40 backdrop-blur-sm mx-12"
+            className="fixed top-4 left-4 right-4 z-50 rounded-full border border-gray-700 
+               bg-gradient-to-r from-[rgba(0,0,0,0.6)] via-[rgba(34,69,78,0.6)] to-[rgba(0,0,0,0.6)] 
+               backdrop-blur mx-12 shadow-lg"
         >
             <div className="flex justify-between items-center py-1 px-6 sm:px-10 md:px-14">
                 {/* Logo */}
-                <Link to="/" className="flex items-center">
+                <Link to="/homepage" className="flex items-center">
                     <div className="text-white font-bold tracking-wide text-3xl sm:text-4xl transition-transform duration-300 transform hover:scale-105">
                         Study<span className="text-green-500 uppercase">Buddy</span>
                     </div>

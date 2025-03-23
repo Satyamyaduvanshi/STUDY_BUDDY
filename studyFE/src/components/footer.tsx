@@ -18,34 +18,31 @@ const links = [
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-black text-white opacity-90">
-      {/* Big Horizontal Line */}
+    <footer className="w-full bg-gradient-to-br from-black via-green-800 to-black text-white opacity-95">
+      <div className="container mx-auto flex flex-col items-center gap-6 py-10 px-6">
 
-      {/* Footer Content */}
-      <div className="container mx-auto flex flex-col items-center gap-4 py-8 px-4">
+        {/* Divider Line */}
+        <div className="border-t border-gray-600 w-2/3 opacity-50"></div>
 
-        {/* Small Thin Line */}
-        <div className="border-t border-white w-1/2"></div>
-
-        {/* Made with Love Text */}
-        <div className="text-center text-base font-medium">
-          Made with ❤️ by SATYAM
+        {/* Made with Love */}
+        <div className="text-center text-lg font-semibold tracking-wide">
+          Made with <span className="text-red-500">❤️</span> by SATYAM
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-sm font-light">
-          @Videos used in the website are not belongs to us.
+        <p className="text-center text-sm text-gray-300 max-w-md">
+          Videos used on this website do not belong to us. All rights belong to their respective owners.
         </p>
 
-        {/* Social Links */}
-        <div className="flex gap-6">
+        {/* Social Icons */}
+        <div className="flex gap-8 mt-4">
           {links.map((link, index) => (
             <a
               key={index}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white text-xl transition-colors duration-300 hover:text-green-300"
+              className="text-white text-2xl transition transform hover:text-green-400 hover:scale-110"
             >
               {link.icon}
             </a>
