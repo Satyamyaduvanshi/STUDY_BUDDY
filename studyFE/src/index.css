@@ -5,4 +5,8 @@
 html {
     scroll-behavior: smooth;
   }
-  
+
+  /* Hide horizontal scroll globally */
+body, html {
+  overflow-x: hidden;
+}
