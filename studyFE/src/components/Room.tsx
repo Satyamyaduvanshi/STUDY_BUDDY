@@ -29,7 +29,9 @@ const Room = () => {
 
   // Start timer only after currentRoom is set
   useEffect(() => {
-    console.log("currentRoom: ", rooms);
+    console.log("currentRoom: ", currentRoom);
+
+    //currentRoom.expiresAt = '2025-04-01T01:22:27.136Z'
 
     if (currentRoom?.expiresAt) {
       const expiryTime = new Date(currentRoom.expiresAt).getTime();

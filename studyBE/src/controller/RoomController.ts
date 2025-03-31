@@ -222,7 +222,7 @@ export async function joinRoom(socket:WebSocket,roomId: number,userId:number) {
         rooms.get(roomId)!.users.set(userId,socket);
 
         socket.send(JSON.stringify({
-            message: "room joined",
+            event: "room joined",
             roomId,
             expiresAt:  room.expiresAt
         }))

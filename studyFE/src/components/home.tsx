@@ -12,11 +12,6 @@ export default function HomePage() {
         <Bar/>
         <Hero/>
         <Footer/>
-
         </div>
-        
-     
-    )
-
-    
-}
+    )    
+}; 

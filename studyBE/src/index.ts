@@ -64,6 +64,7 @@ wss.on("connection", (socket: AuthenticatedSocket) => {
           socket.userId = userId; // Save user ID on the socket
 
           try {
+            
             const user = await client.user.findUnique({
               where:{
                 id: userId

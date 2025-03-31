@@ -10,6 +10,11 @@ interface RoomProps {
   expiresAt: string;
 }
 
+type joinProps={
+  id: number,
+  expiresAt: string;
+}
+
 interface MessageProps {
   roomId: number;
   userId: number;
@@ -22,8 +27,8 @@ interface WebSocketContextType {
   rooms: RoomProps[];
   username: string;
   messages: MessageProps[];
-  currentRoom: RoomProps | null;
-  setCurrentRoom: React.Dispatch<React.SetStateAction<RoomProps | null>>;
+  currentRoom: joinProps | null;
+  setCurrentRoom: React.Dispatch<React.SetStateAction<joinProps | null>>;
 }
 
 const WebSocketContext = createContext<WebSocketContextType>({
@@ -42,7 +47,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [rooms, setRooms] = useState<RoomProps[]>([]);
   const [username, setUsername] = useState<string>("");
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [currentRoom, setCurrentRoom] = useState<RoomProps | null>(null);
+  const [currentRoom, setCurrentRoom] = useState<joinProps | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,14 +73,15 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
           console.log(`✅ User ${data.userId} authenticated successfully`);
           setUsername(data.name);
           ws.send(JSON.stringify({ event: "listRooms" }));
-        }else if (data.event === "roomJoined") {
+        }else if (data.event === "room joined") {
           setCurrentRoom({
             id: data.roomId,
-            roomName: data.roomName || "Room",
-            description: data.description || "",
-            duration: data.duration || 0,
-            expiresAt: data.expiresAt, // Ensure this is included
+            // roomName:"room",
+            // description:"welcome to this room",
+            // duration:0,
+            expiresAt: data.expiresAt,
           });
+      
           console.log("🟢 Joined Room:", data);
         }
         else if (data.error) {
