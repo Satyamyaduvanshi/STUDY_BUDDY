@@ -325,6 +325,14 @@ export async function handleChatMessage(roomId: number, userId: number, message:
     if (!rooms.has(roomId)) {
         return;
     }
+    const userName = await client.user.findFirst({
+        where:{
+            id: userId
+        },
+        select:{
+            name:true
+        }
+    })
 
     // Optional: Save message in DB if you want chat history persistence
     // await client.chatMessage.create({
@@ -342,7 +350,9 @@ export async function handleChatMessage(roomId: number, userId: number, message:
             event: "newMessage",
             roomId,
             message,
-            userId
+            userId,
+            userName:userName?.name
+            
         }));
     });
 }

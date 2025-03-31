@@ -90,13 +90,13 @@ const Room = () => {
           .filter((msg) => msg.roomId === mainRoomId)
           .map((msg, idx) => (
             <div key={idx} className={`mb-2 text-white ${msg.userName === username ? "text-right" : "text-left"}`}>
-              <span className="font-bold">{msg.userId}: </span> {msg.message}
+              <span className="font-bold">{msg.userName}: </span> {msg.message}
             </div>
           ))}
         <div ref={chatEndRef} />
       </div>
       <form onSubmit={handleSendMessage} className="flex w-full max-w-3xl mt-4">
-        <input
+        <input       
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}

@@ -66,6 +66,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
     ws.onmessage = (event) => {
       try {
+        
         const data = JSON.parse(event.data);
         console.log("📩 Received:", data);
 
